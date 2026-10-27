@@ -44,15 +44,16 @@ def parse_game_args(argv: list[str]) -> list[str]:
         return []
 
 
-def find_game_executable() -> Path | None:
+def find_game_executable(config: str = "Debug") -> Path | None:
     """Locate the game executable using the standard search order.
 
     Returns the Path to the executable if found, or None if not found.
-    Search order: direct -> Debug/ -> Release/
+    Search order: direct -> <config>/ (the build just made) -> Debug/ -> Release/
     """
     exe_suffix = ".exe" if sys.platform == "win32" else ""
     candidates = [
         CPP_DIR / "build" / "game" / f"game{exe_suffix}",
+        CPP_DIR / "build" / "game" / config / f"game{exe_suffix}",
         CPP_DIR / "build" / "game" / "Debug" / f"game{exe_suffix}",
         CPP_DIR / "build" / "game" / "Release" / f"game{exe_suffix}",
     ]
@@ -113,15 +114,17 @@ def cmake_configure(debug=False):
     subprocess.run(cmd, cwd=CPP_DIR, check=True)
 
 
-def cmake_build(target=None):
-    cmd = ["cmake", "--build", "build"]
+def cmake_build(target=None, config="Debug"):
+    # --config picks the configuration on multi-config generators (Visual
+    # Studio), which ignore CMAKE_BUILD_TYPE; single-config generators ignore it.
+    cmd = ["cmake", "--build", "build", "--config", config]
     if target:
         cmd += ["--target", target]
     subprocess.run(cmd, cwd=CPP_DIR, check=True)
 
 
-def ctest_run(filter_re=None, test_dir="build", extra_args=None, exclude_re=None):
-    cmd = ["ctest", "--test-dir", test_dir, "-C", "Debug", "--output-on-failure"]
+def ctest_run(filter_re=None, test_dir="build", extra_args=None, exclude_re=None, config="Debug"):
+    cmd = ["ctest", "--test-dir", test_dir, "-C", config, "--output-on-failure"]
     if filter_re:
         cmd += ["-R", filter_re]
     if exclude_re:
@@ -129,6 +132,43 @@ def ctest_run(filter_re=None, test_dir="build", extra_args=None, exclude_re=None
     if extra_args:
         cmd += extra_args
     subprocess.run(cmd, cwd=CPP_DIR, check=True)
+
+
+PACKAGE_NAME = "ZeroArc"
+DIST_DIR = SCRIPT_DIR / "dist"
+
+
+def package_game():
+    """Build Release and zip game.exe + its DLLs + assets/ into dist/.
+
+    The game finds assets/ next to the executable (see
+    CPP/engine/project_paths.hpp), so the zip runs from any folder.
+    """
+    cmake_configure(debug=False)
+    cmake_build(GAME_TARGET, config="Release")
+
+    exe_path = CPP_DIR / "build" / "game" / "Release" / "game.exe"
+    if not exe_path.exists():
+        print(f"\n  ERROR: Release executable not found at {exe_path}\n")
+        return
+
+    stage = DIST_DIR / PACKAGE_NAME
+    if stage.exists():
+        shutil.rmtree(stage)
+    stage.mkdir(parents=True)
+
+    # Only what a player needs: the exe and runtime DLLs (no .pdb / .lib).
+    shutil.copy2(exe_path, stage / f"{PACKAGE_NAME}.exe")
+    for dll in exe_path.parent.glob("*.dll"):
+        shutil.copy2(dll, stage)
+    shutil.copytree(SCRIPT_DIR / "assets", stage / "assets")
+    if (SCRIPT_DIR / "LICENSE").exists():
+        shutil.copy2(SCRIPT_DIR / "LICENSE", stage)
+
+    zip_path = shutil.make_archive(str(DIST_DIR / PACKAGE_NAME), "zip",
+                                   root_dir=DIST_DIR, base_dir=PACKAGE_NAME)
+    print(f"\n  Packaged: {zip_path}")
+    print(f"  Test it by unzipping somewhere else and running {PACKAGE_NAME}.exe\n")
 
 
 def pick(prompt, options):
@@ -654,7 +694,7 @@ def debug_session_builder():
 
 
 def main():
-    debug_build = False
+    debug_build = True
 
     def _build_label():
         return "Debug" if debug_build else "Release"
@@ -669,6 +709,7 @@ def main():
         "Run All Tests (with Timer)",
         "Run Engine Tests",
         "Run Game Tests",
+        "Package Game (Release zip in dist/)",
     ]
 
     while True:
@@ -687,17 +728,19 @@ def main():
                 print(f"  Build type set to: {_build_label()}")
                 continue
 
+            cfg = _build_label()
+
             if choice == 0:  # Compile
                 cmake_configure(debug=debug_build)
-                cmake_build(GAME_TARGET)
-                print(f"\nBuild complete ({_build_label()}).")
+                cmake_build(GAME_TARGET, config=cfg)
+                print(f"\nBuild complete ({cfg}).")
 
             elif choice == 1:  # Run Game
                 # Build then run the executable directly via find_game_executable()
                 # (there is no separate runGame.py).
                 cmake_configure(debug=debug_build)
-                cmake_build(GAME_TARGET)
-                exe_path = find_game_executable()
+                cmake_build(GAME_TARGET, config=cfg)
+                exe_path = find_game_executable(cfg)
                 if exe_path is None:
                     print("\n  ERROR: Game executable not found after build.")
                     print(f"  Searched under: {CPP_DIR / 'build' / 'game'}\n")
@@ -711,35 +754,38 @@ def main():
 
             elif choice == 3:  # Tests (Engine + Game, no Timer)
                 cmake_configure(debug=debug_build)
-                cmake_build()
-                ctest_run(ENGINE_CTEST_PREFIX, exclude_re="Timer")
-                ctest_run(GAME_CTEST_PREFIX)
+                cmake_build(config=cfg)
+                ctest_run(ENGINE_CTEST_PREFIX, exclude_re="Timer", config=cfg)
+                ctest_run(GAME_CTEST_PREFIX, config=cfg)
 
             elif choice == 4:  # Tests (Engine + Game, with Timer)
                 cmake_configure(debug=debug_build)
-                cmake_build()
-                ctest_run(ENGINE_CTEST_PREFIX)
-                ctest_run(GAME_CTEST_PREFIX)
+                cmake_build(config=cfg)
+                ctest_run(ENGINE_CTEST_PREFIX, config=cfg)
+                ctest_run(GAME_CTEST_PREFIX, config=cfg)
 
             elif choice == 5:  # All Tests (no Timer)
                 cmake_configure(debug=debug_build)
-                cmake_build()
-                ctest_run(exclude_re="Timer")
+                cmake_build(config=cfg)
+                ctest_run(exclude_re="Timer", config=cfg)
 
             elif choice == 6:  # All Tests (with Timer)
                 cmake_configure(debug=debug_build)
-                cmake_build()
-                ctest_run()
+                cmake_build(config=cfg)
+                ctest_run(config=cfg)
 
             elif choice == 7:  # Engine Tests
                 cmake_configure(debug=debug_build)
-                cmake_build()
-                ctest_run(ENGINE_CTEST_PREFIX)
+                cmake_build(config=cfg)
+                ctest_run(ENGINE_CTEST_PREFIX, config=cfg)
 
             elif choice == 8:  # Game-specific Tests
                 cmake_configure(debug=debug_build)
-                cmake_build()
-                ctest_run(GAME_CTEST_PREFIX)
+                cmake_build(config=cfg)
+                ctest_run(GAME_CTEST_PREFIX, config=cfg)
+
+            elif choice == 9:  # Package Game
+                package_game()
 
         except subprocess.CalledProcessError:
             pass  # error already printed by subprocess

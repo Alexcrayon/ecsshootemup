@@ -71,8 +71,21 @@ This opens a menu:
 | 1. Compile Game | Configures and builds the game |
 | 2. Run Game | Builds, then launches the game |
 | 3–9 | Builds, then runs the engine and game test suites |
+| 10. Package Game | Builds Release and writes a playable zip to `dist/ZeroArc.zip` |
+| 11. Toggle Build Type | Switches options 1–9 between Debug (default) and Release |
 
-The executable is written to `CPP/build/game/Debug/game.exe`.
+The executable is written to `CPP/build/game/<Debug or Release>/game.exe`.
+
+### Package a playable build
+
+Choose **Package Game** in `run.py`. It builds Release and puts the
+executable, its DLLs, and the `assets/` folder in `dist/ZeroArc.zip`.
+Unzip it anywhere and run `ZeroArc.exe`. The game loads assets from the
+`assets/` folder next to the executable, and falls back to the repo's
+`assets/` folder when run from a development build.
+
+Players need the [Microsoft Visual C++ Redistributable (x64)](https://aka.ms/vs/17/release/vc_redist.x64.exe),
+which most Windows PCs already have.
 
 ### Build manually with CMake
 

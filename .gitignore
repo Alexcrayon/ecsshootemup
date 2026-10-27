@@ -78,3 +78,6 @@ logs/
 
 # Machine-specific toolchain path for run.py (not committed)
 run.local.toolchain
+
+# Packaged game zips from run.py "Package Game"
+dist/
