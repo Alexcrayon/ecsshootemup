@@ -1,11 +1,11 @@
 MIT License
 
-Copyright (c) 2026 Juancho Buchanan
+Copyright (c) 2026 Juancho Buchanan (course starter code)
+Copyright (c) 2026 Yifei Cao (game code and engine changes)
 
 This license covers the CS 5850 - Making Game Engines course material in this
 repository: the starter code, reference implementations, engine scaffolding,
-build scripts, and workbook materials provided by the instructor. Work you
-wrote yourself is yours, and you may license it however you choose.
+build scripts, and workbook materials provided by the instructor.
 
 Third-party components keep their own licenses and are not relicensed here:
 SDL3 (zlib), Lua (MIT), Catch2 (BSL-1.0), nlohmann/json (MIT), and the bundled
