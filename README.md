@@ -1,6 +1,6 @@
-# Zero Arc
+# Zero Arc - a mini-game demo for ECS engine
 
-A vertical bullet-hell shoot-'em-up built in C++17 and SDL3 on a custom
+A vertical bullet-hell shoot'em up built in C++17 and SDL3 on a custom
 entity-component-system (ECS) engine, with enemy behavior scripted in Lua.
 
 Clear three waves of enemies, then beat a three-phase boss.
