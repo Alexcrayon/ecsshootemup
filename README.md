@@ -5,7 +5,7 @@ entity-component-system (ECS) engine, with enemy behavior scripted in Lua.
 
 Clear three waves of enemies, then beat a three-phase boss.
 
-<!-- Add a screenshot or GIF here, e.g. ![Gameplay](docs/gameplay.gif) -->
+![gameplay](docs/download.gif)
 
 ## Features
 
