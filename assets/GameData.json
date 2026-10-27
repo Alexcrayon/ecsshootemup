@@ -1,0 +1,131 @@
+{
+  "window": {
+    "title": "ZeroArc",
+    "width": 540,
+    "height": 960
+  },
+  "world": {
+    "x": -270,
+    "y": -480,
+    "width": 540,
+    "height": 960
+  },
+  "bullet": {
+  "speed": 800.0,
+  "lifetime": 4.0,
+  "size": 32.0,
+  "max_live": 100,
+  "fire_cooldown": 0.12,
+  "damage": 1,
+  "layer": 2,
+  "mask": 4
+  },
+  "flash": {
+  "duration": 0.20,
+  "r": 255, "g": 0, "b": 0,
+  "dim_alpha": 60,
+  "period": 0.06
+},
+  
+
+  "enemy_types": {
+    "ring": {
+      "hp": 20, "width": 40, "height":40, "color": { "r": 255, "g": 80, "b": 80, "a": 255 },
+      "image": "enemy_type1_1.png",
+      "script": "scripts/enemy.lua",
+      "params": { "entry_speed": 200,"hold_y": 240, "fire_interval": 1.0, "burst_count": 24, "bullet_speed": 300, "strafe_amp": 100, "strafe_speed": 1.2  }
+    },
+    "spiral": {
+      "hp": 30, "width": 64, "height":32, "color": { "r": 200, "g": 80, "b": 255, "a": 255 },
+      "image": "enemy_type2.png",
+      "script": "scripts/enemy.lua",
+      "params": { "hold_y": 300, "fire_interval": 0.25, "burst_count": 6, "spin_per_burst": 0.35, "bullet_speed": 300 }
+    },
+    "fan": {
+      "hp": 30, "width":64, "height":32, "color": { "r": 255, "g": 200, "b": 60, "a": 255 },
+      "image": "enemy_type2.png",
+      "script": "scripts/enemy.lua",
+      "params": { "hold_y": 380, "fire_interval": 1.0, "burst_count": 7, "arc_span": 0.9, "aim_at_player": 1, "spin_per_burst": 0, "bullet_speed": 300 }
+    },
+    "boss": {
+      "hp": 140, "width": 78, "height": 96, "color": { "r": 255, "g": 60, "b": 160, "a": 255 },
+      "image": "enemy_boss.png",
+      "script": "scripts/boss.lua",
+      "_comment": "boss.lua is self-contained."
+    }
+  },
+  "waves": [
+    { "start_delay": 0.5, "spawns": [
+        { "type": "ring", "x": -120, "y": 520, "delay": 0.0 },
+        { "type": "ring", "x": 90,  "y": 520, "delay": 0.75 } ] },
+    { "start_delay": 1.5, "spawns": [
+        { "type": "spiral", "x": -60, "y": 540, "delay": 0.0 },
+        { "type": "fan",    "x": 120, "y": 560, "delay": 1.0, "params": { "burst_count": 5} } ] },
+    { "start_delay": 2.0, "spawns": [
+        { "type": "boss", "x": -45, "y": 520, "delay": 0.0 } ] }
+  ],
+
+  "entities": [
+    {
+      "id": "pond_bg",
+      "components": {
+        "position": { "x":-270, "y":-480},
+        "size": { "width": 540.0, "height": 960.0 },
+        "color": { "r": 30, "g": 80, "b": 120, "a": 255 },
+        "images": { "names": ["desert-background-looped.png"], "active_index": 0 }
+      }
+    },
+    {
+      "id": "player",
+      "components": {
+        "position": { "x": -10.0, "y": -420.0 },
+        "size": { "width": 32.0, "height": 48.0 },
+        "color": { "r": 255, "g": 255, "b": 255, "a": 255 },
+        "images": { "names": ["new_ship.png", "new_ship_2.png"], "active_index": 0 },
+        "velocity": { "dx": 0.0, "dy": 0.0 },
+        "input": {},
+        "health": { "current": 3, "max": 3 },
+        "collider": { "width": 32.0, "height": 48.0, "layer": 1, "mask": 12 },
+        "circle_collider": { "radius": 5.0, "offset_x": 16.5, "offset_y": 16.5 }
+      }
+    },
+   
+    {
+      "id": "score_manager",
+      "components": {
+        "script": { "filename": "scripts/score.lua" }
+      }
+    }
+ 
+  ],
+  "hud_entities": [
+    {
+      "id": "hud_player_hp",
+      "components": {
+        "text": {
+          "content": "HP: 3/3",
+          "blackboard_key": "hud.player_hp",
+          "font_name": "default.ttf",
+          "font_size": 24.0,
+          "color": { "r": 255, "g": 255, "b": 255, "a": 255 }
+        },
+        "screen_position": { "x": 20.0, "y": 920.0 }
+      }
+    },
+    {
+      "id": "hud_banner",
+      "components": {
+        "text": {
+          "content": "Zero Arc\nPress SPACE to start",
+          "blackboard_key": "hud.banner",
+          "font_name": "default.ttf",
+          "font_size": 28.0,
+          "color": { "r": 255, "g": 230, "b": 120, "a": 255 },
+          "center": true
+        },
+        "screen_position": { "x": 0.0, "y": 540.0 }
+      }
+    }
+    
+  ]
+}

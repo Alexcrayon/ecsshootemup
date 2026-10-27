@@ -1,0 +1,50 @@
+{
+  "output_directory": "images",
+  "model": "openai/gpt-5-image",
+  "images": [
+    {
+      "filename": "duck.png",
+      "width": 256,
+      "height": 256,
+      "prompt": "Pixel art style, 16-bit retro SNES aesthetic, crisp clean pixels with visible pixel edges, no anti-aliasing. A top-down view of a cartoon duck facing right. Yellow-orange body, orange beak pointing right, small round eye. The duck fills about 70% of the frame, centered. Output as a PNG with a fully transparent (alpha=0) background. No shadow, no text, no border."
+    },
+    {
+      "filename": "fish.png",
+      "width": 256,
+      "height": 256,
+      "prompt": "Pixel art style, 16-bit retro SNES aesthetic, crisp clean pixels with visible pixel edges, no anti-aliasing. A top-down view of a cartoon fish facing right. Orange body, small tail fin on the left, round eye. The fish fills about 70% of the frame, centered. Output as a PNG with a fully transparent (alpha=0) background. No shadow, no text, no border."
+    },
+    {
+      "filename": "frog.png",
+      "width": 256,
+      "height": 256,
+      "prompt": "Pixel art style, 16-bit retro SNES aesthetic, crisp clean pixels with visible pixel edges, no anti-aliasing. A top-down view of a cartoon frog facing right. Bright green body, two large round eyes on top, small legs tucked. The frog fills about 70% of the frame, centered. Output as a PNG with a fully transparent (alpha=0) background. No shadow, no text, no border."
+    },
+    {
+      "filename": "lilypad.png",
+      "width": 256,
+      "height": 256,
+      "prompt": "Pixel art style, 16-bit retro SNES aesthetic, crisp clean pixels with visible pixel edges, no anti-aliasing. A top-down view of a circular lily pad. Dark green leaf with a small V-shaped notch, subtle vein lines radiating from center. The lily pad fills about 70% of the frame, centered. Output as a PNG with a fully transparent (alpha=0) background. No shadow, no text, no border."
+    },
+    {
+      "filename": "dragonfly.png",
+      "width": 256,
+      "height": 256,
+      "prompt": "Pixel art style, 16-bit retro SNES aesthetic, crisp clean pixels with visible pixel edges, no anti-aliasing. A top-down view of a cartoon dragonfly facing right. Light blue elongated body, two pairs of translucent wings spread out, small round eyes. The dragonfly fills about 70% of the frame, centered. Output as a PNG with a fully transparent (alpha=0) background. No shadow, no text, no border."
+    },
+    {
+      "filename": "pond_bg.png",
+      "width": 800,
+      "height": 600,
+      "prompt": "Pixel art style, 16-bit retro SNES aesthetic. A top-down view of a pond scene. Blue-green water with subtle ripple patterns, a few darker patches suggesting depth. Fills the entire frame edge to edge. No objects, no creatures, just water."
+    }
+  ],
+  "programmatic": [
+    {
+      "filename": "checkerboard.png",
+      "width": 512,
+      "height": 512,
+      "description": "Magenta and black checkerboard pattern (missing texture fallback). Generated programmatically, no API call needed."
+    }
+  ]
+}

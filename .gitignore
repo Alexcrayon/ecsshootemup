@@ -1,0 +1,80 @@
+# =============================================================================
+# Student .gitignore — CS 5850 Game Engines (Summer 2026)
+# =============================================================================
+# This file prevents build artifacts and OS junk from being committed.
+# Do NOT remove this file from your repository.
+
+# ---- Build directories (CMake) ----
+build/
+# Note: bare "Debug/" / "Release/" patterns are intentionally absent.
+# CMake build output always lives under build/, which is already ignored.
+# A bare "Debug/" rule would collide with engine source directories named
+# "debug/" (e.g. engine/ecs/debug/) on case-insensitive filesystems
+# (macOS APFS, Windows NTFS) where git's core.ignorecase=true.
+# As defense-in-depth, the negation below explicitly rescues engine debug code.
+!**/engine/**/debug/
+x64/
+out/
+bin/
+
+# ---- Compiled object files ----
+*.o
+*.obj
+*.lo
+*.slo
+
+# ---- Compiled libraries ----
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+
+# ---- Executables ----
+*.exe
+*.out
+*.app
+
+# ---- CMake generated files ----
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+_deps/
+
+# ---- IDE files ----
+.vscode/
+.vs/
+.idea/
+*.user
+*.suo
+*.swp
+
+# ---- macOS ----
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ---- Windows ----
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ---- Office lock files ----
+~$*
+
+# ---- Python bytecode ----
+__pycache__/
+*.py[cod]
+*.pyo
+
+# ---- Dependency directories ----
+vcpkg/
+deps/
+
+# ---- Run logs (screenshots / frame dumps) ----
+logs/
+
+# Machine-specific toolchain path for run.py (not committed)
+run.local.toolchain
